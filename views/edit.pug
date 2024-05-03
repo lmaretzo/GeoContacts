@@ -1,0 +1,61 @@
+extends layout
+
+block content
+  h1.text-center.mb-4 Edit Contact: #{contact.FirstName} #{contact.LastName}
+  .container.mt-5
+    .row.justify-content-center
+      .col-lg-6.col-md-8.bg-light.p-5
+        form(method='POST', action=`/contact/${contact.ID}/edit`)
+          input(type="hidden", name="_csrf", value=csrfToken)
+          
+          .form-floating.mb-3
+            input.form-control(type='text', name='firstName', id='firstName', placeholder='', value=contact.FirstName, required)
+            label(for='firstName') First Name
+          
+          .form-floating.mb-3
+            input.form-control(type='text', name='lastName', id='lastName', placeholder='', value=contact.LastName, required)
+            label(for='lastName') Last Name
+
+          .form-floating.mb-3
+            input.form-control(type='tel', name='phoneNumber', id='phoneNumber', placeholder='', value=contact.PhoneNumber)
+            label(for='phoneNumber') Phone Number
+
+          .form-floating.mb-3
+            input.form-control(type='email', name='emailAddress', id='emailAddress', placeholder='', value=contact.EmailAddress)
+            label(for='emailAddress') Email Address
+
+          .form-floating.mb-3
+            input.form-control(type='text', name='street', id='street', placeholder='', value=contact.Street)
+            label(for='street') Street
+
+          .form-floating.mb-3
+            input.form-control(type='text', name='city', id='city', placeholder='', value=contact.City)
+            label(for='city') City
+
+          // I was attempting to make the row for State and Zip fields to be side by side
+          .row.g-2.mb-3
+            .col-md-6
+              .form-floating
+                input.form-control(type='text', name='state', id='state', placeholder='', value=contact.State, required)
+                label(for='state') State
+            .col-md-6
+              .form-floating
+                input.form-control(type='text', name='zip', id='zip', placeholder='', value=contact.Zip, required)
+                label(for='zip') Zip
+
+          .form-floating.mb-3
+            input.form-control(type='text', name='country', id='country', placeholder='', value=contact.Country)
+            label(for='country') Country
+
+          // Checkbox options
+          .form-check.form-switch.mb-3
+            input.form-check-input(type='checkbox', name='contactByEmail', id='contactByEmail', checked=contact.Contact_By_Email ? true : false)
+            label.form-check-label(for='contactByEmail') Contact by Email
+
+          .form-check.form-switch.mb-3
+            input.form-check-input(type='checkbox', name='contactByPhone', id='contactByPhone', checked=contact.Contact_By_Phone ? true : false)
+            label.form-check-label(for='contactByPhone') Contact by Phone
+
+          // Submission button
+          .d-grid.gap-2
+            button.btn.btn-primary(type='submit') Save Changes

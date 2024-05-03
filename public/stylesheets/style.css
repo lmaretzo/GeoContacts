@@ -1,0 +1,328 @@
+style.css:
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background: #ffffff;
+  margin: 0; /* No margin for the body */
+}
+
+header {
+  padding: 0;
+  background: #989a9c;
+  margin: 0; 
+  width: 100%; 
+  box-sizing: border-box; 
+}
+
+nav ul {
+  list-style: none;
+  padding-left: 0;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+nav li {
+  padding: 10px;
+}
+
+nav a {
+  text-decoration: none;
+  color: white;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+h1 {
+  color: #333;
+  margin-top: 20px;
+}
+
+/* Form styling */
+.form-control {
+  padding: .375rem .75rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  height: auto;
+  border-radius: .25rem;
+  background-color: #e9ecef;
+  border: 1px solid #ced4da;
+}
+
+/* Custom styling for floating labels */
+.form-floating {
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.form-floating > .form-control {
+  padding: .175rem .75rem;
+  height: auto;
+  background-color: #f8f9fa;
+  border: 1px solid #ced4da;
+  border-radius: .25rem;
+}
+
+.form-floating > .form-control:focus {
+  border-color: #3e99fb;
+  box-shadow: 0 0 0 .2rem rgba(0, 123, 255, .25);
+}
+
+.form-floating > label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: .375rem .75rem;
+  margin-bottom: 0;
+  pointer-events: none;
+  border-radius: .25rem;
+  transition: all .2s;
+  font-size: .875rem;
+}
+
+.form-floating > .form-control:focus::placeholder {
+  opacity: 0; /* Ensures placeholder is not seen. */
+}
+
+.form-floating > .form-control:not(:placeholder-shown) ~ label,
+.form-floating > .form-control:focus ~ label {
+  opacity: 1;
+  top: -1.5rem;
+  left: 0rem; 
+  font-size: .75rem;
+}
+
+@media (min-width: 768px) { /* For medium-sized screens and up */
+  .half-width {
+    display: flex;
+  }
+  
+  .half-width .form-floating {
+    flex: 1;
+    margin-right: 0.5rem; /* Space between state and zip inputs. Could not implement */
+  }
+  
+  .half-width .form-floating:last-child {
+    margin-right: 0;
+  }
+}
+.form-control {
+  width: 100%; 
+
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  background-color: #f5f5f5;
+  position: relative;
+  bottom: 0;
+  width: 100%;
+}
+
+.error {
+  color: red;
+  text-align: center;
+}
+
+.form-check-input {
+  width: 1em;
+  height: 1em;
+  margin-top: .25em;
+  vertical-align: middle;
+  background-color: #f8f9fa;
+  border: 1px solid #adb5bd;
+}
+
+.form-check-input:checked {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.form-check-label {
+  margin-left: .5rem;
+}
+
+/* Styles for the login container */
+.login-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; 
+}
+
+/* Styles for the login form */
+.login-form {
+  background-color: #f8f9fa; 
+  padding: 2rem;
+  border-radius: 0.25rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 100%;
+  margin: auto;
+}
+
+/* Styles for the form buttons */
+.login-form button {
+  width: 100%; 
+  padding: 10px;
+  font-size: 1rem;
+  margin-top: 1rem;
+  border: none;
+  border-radius: .25rem;
+}
+
+/* Style for the primary Log on button */
+.login-form button[type='submit'] {
+  background-color: #007bff; 
+  color: white;
+}
+
+/* Style for the secondary Sign Up button */
+.login-form button[type='button'] {
+  background-color: #6c757d; 
+  color: white;
+  margin-top: .5rem;
+}
+
+.login-form button:hover {
+  opacity: 0.9;
+}
+/* Styles for contacts list to mimic table appearance. I am using a list for better implementation with smaller screens */
+.contacts-list {
+  padding: 0;
+  list-style-type: none;
+  margin-bottom: 30px; 
+}
+
+.contacts-list-header,
+.contacts-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ddd; 
+  padding: 0.75rem; 
+}
+
+.contacts-list-header {
+  background-color: #f8f8f8; 
+  font-weight: bold;
+}
+
+.contacts-list-item div {
+  margin-right: 1rem; 
+}
+
+.contacts-list-item-actions {
+  align-self: flex-end; /* Align the actions to the bottom */
+  padding-top: 0.5rem;
+}
+
+
+
+.contacts-list-item:nth-child(even) {
+  background-color: #f2f2f2; 
+}
+
+.contacts-list-item:hover {
+  background-color: #e8e8e8; 
+}
+
+.contacts-list div {
+  flex: 1 1 20%; 
+  margin: 0 30px;
+}
+
+.contacts-list a {
+  text-decoration: none;
+  color: #0056b3; 
+}
+
+.contacts-list a:hover {
+  text-decoration: underline; /* Hover effect for links */
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .contacts-list-header,
+  .contacts-list-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .contacts-list div {
+    flex-basis: 100%; 
+    margin: 5px 0; /* Reduce spacing */
+  }
+
+  /* Adjust font sizes for smaller screens */
+  body, .contacts-list-header, .contacts-list-item {
+    font-size: smaller;
+  }
+}
+
+.contact-info-container {
+
+  display: block;
+  background-color: #f8f9fa;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 0.25rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+}
+
+.contact-info div {
+  margin-bottom: 0.5rem;
+}
+
+.contact-actions {
+  text-align: left;
+}
+
+.contact-actions a {
+  background-color: #007bff;
+  color: white;
+  padding: 6px 12px;
+  text-decoration: none;
+  border-radius: 4px;
+  margin-right: 5px;
+}
+
+.contact-actions form {
+  display: inline;
+}
+
+.contact-actions button {
+  background-color: #dc3545;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+  .contact-info-container {
+    box-shadow: none;
+    border: 1px solid #ddd;
+  }
+
+  .contact-info div, .contact-actions a, .contact-actions button {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .contact-actions a, .contact-actions button {
+    margin-bottom: 0.5rem;
+  }
+}
+

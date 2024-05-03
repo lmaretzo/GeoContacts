@@ -1,0 +1,24 @@
+extends layout
+
+block content
+  .login-container
+    .login-form(style='margin-top: 2rem;') 
+      h1.text-center.mb-4 Login
+
+      form(method='POST', action='/login')
+        input(type='hidden', name='_csrf', value=csrfToken)
+
+        .form-floating.mb-3
+          input.form-control(type='text', name='username', id='username', placeholder=' ', required)
+          label(for='username') Username
+
+        .form-floating.mb-3
+          input.form-control(type='password', name='password', id='password', placeholder=' ', required)
+          label(for='password') Password
+
+        if error
+          .alert.alert-danger= error
+
+        .d-grid.gap-2
+          button.btn.btn-primary.btn-lg.btn-block(type='submit') Log In
+          button.btn.btn-secondary.btn-lg.btn-block(type='button', onclick="location.href='/signup'") Sign Up

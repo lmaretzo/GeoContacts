@@ -1,0 +1,39 @@
+extends layout
+
+block content
+  h1 Contact Information
+
+  .contact-info-container
+    .contact-info
+      div Name: #{contact.FirstName} #{contact.LastName}
+      div Phone: #{contact.PhoneNumber}
+      div Email: #{contact.EmailAddress}
+      div Address: #{contact.Street}, #{contact.City}, #{contact.State}, #{contact.Zip}, #{contact.Country}
+      div Contact Preferences: 
+        if contact.Contact_By_Email
+          | Email 
+        if contact.Contact_By_Phone
+          | Phone
+
+    .contact-actions
+      a(href=`/contact/${contact.ID}/edit`) Edit
+      form(method="POST", action=`/contact/${contact.ID}/delete?_csrf=${csrfToken}`)
+        button(type='submit') Delete
+
+  // Add map container
+  #map-container
+    #map(style='height: 400px;') // Set a height for the map
+
+  // Include Leaflet CSS and JS
+  link(rel='stylesheet' href='https://unpkg.com/leaflet@1.9.3/dist/leaflet.css')
+  script(src='https://unpkg.com/leaflet@1.9.3/dist/leaflet.js')
+
+  // Initialize the map with a script
+  script.
+    var map = L.map('map').setView([#{contact.lat || '0'}, #{contact.lng || '0'}], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
+      maxZoom: 18
+    }).addTo(map);
+    var marker = L.marker([#{contact.lat || '0'}, #{contact.lng || '0'}]).addTo(map);
+    marker.bindPopup("#{contact.FirstName} #{contact.LastName}<br>#{contact.Street}, #{contact.City}");

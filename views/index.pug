@@ -1,0 +1,44 @@
+extends layout
+
+block content
+    h1 Contact List
+
+    if contacts && contacts.length
+        ul.contacts-list
+            each contact in contacts
+                li.contacts-list-item
+                    div #{contact.FirstName} #{contact.LastName}
+                    div #{contact.PhoneNumber}
+                    div #{contact.EmailAddress}
+                    div #{contact.Street}, #{contact.City}, #{contact.State}, #{contact.Zip}, #{contact.Country}
+                    div
+                        a(href=`/contact/${contact.ID}`) View
+                        |  
+                        a(href=`/contact/${contact.ID}/edit`) Edit
+
+    else
+        p No contacts found.
+
+    // Map container
+    #map-container(style='height: 700px; margin-top: 20px; margin-bottom: 20px; margin-right: 20px; margin-left: 20 px;')
+        #map(style='width: 100%; height: 100%;')
+
+    // Leaflet CSS and JS
+    link(rel='stylesheet', href='https://unpkg.com/leaflet@1.9.3/dist/leaflet.css')
+    script(src='https://unpkg.com/leaflet@1.9.3/dist/leaflet.js')
+
+    // Map initialization script
+    script.
+        var map = L.map('map').setView([41.08224455, -74.1738235180645], 10); // Adjust the default view coordinates and zoom level
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
+            maxZoom: 50
+        }).addTo(map);
+        
+        // Example to add a marker for each contact
+        !{JSON.stringify(contacts)}.forEach(function(contact) {
+            if (contact.lat && contact.lng) {
+                var popupText = contact.FirstName + ' ' + contact.LastName + '<br>' + contact.Street;
+                L.marker([contact.lat, contact.lng]).addTo(map).bindPopup(popupText);
+            }
+        });
