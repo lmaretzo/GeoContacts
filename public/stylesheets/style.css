@@ -1,4 +1,3 @@
-style.css:
 html, body {
   margin: 0;
   padding: 0;
@@ -19,31 +18,63 @@ header {
   box-sizing: border-box; 
 }
 
+nav {
+  background-color: #f8f9fa;
+  box-shadow: 0 2px 4px rgba(0,0,0,.1);
+  padding: 15px 0;
+}
+
 nav ul {
   list-style: none;
   padding-left: 0;
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
+  margin: 0;
 }
 
 nav li {
-  padding: 10px;
+  margin: 0 10px;
 }
 
 nav a {
   text-decoration: none;
-  color: white;
+  color: #007bff;
+  padding: 8px 16px;
+  background-color: #e9ecef;
+  border: 1px solid #dee2e6;
+  border-radius: 5px;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 nav a:hover {
-  text-decoration: underline;
+  background-color: #007bff;
+  color: white;
 }
+.navbar-brand {
+  display: inline-block;
+  margin: 0 auto;
+  font-weight: bold;
+  color: #007bff;
+  text-align: center;
+  padding: 10px;
+  background-color: #e9ecef;
+  border: 1px solid #dee2e6;
+  border-radius: 5px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.navbar-brand:hover {
+  background-color: #007bff;
+  color: white;
+}
+
 
 h1 {
   color: #333;
   margin-top: 20px;
 }
+
 
 /* Form styling */
 .form-control {
@@ -186,7 +217,7 @@ footer {
   color: white;
 }
 
-/* Style for the secondary Sign Up button */
+
 .login-form button[type='button'] {
   background-color: #6c757d; 
   color: white;
@@ -196,7 +227,7 @@ footer {
 .login-form button:hover {
   opacity: 0.9;
 }
-/* Styles for contacts list to mimic table appearance. I am using a list for better implementation with smaller screens */
+
 .contacts-list {
   padding: 0;
   list-style-type: none;
@@ -247,7 +278,7 @@ footer {
 }
 
 .contacts-list a:hover {
-  text-decoration: underline; /* Hover effect for links */
+  text-decoration: underline; 
 }
 
 
@@ -271,7 +302,6 @@ footer {
 }
 
 .contact-info-container {
-
   display: block;
   background-color: #f8f9fa;
   padding: 1rem;
@@ -279,7 +309,6 @@ footer {
   border-radius: 0.25rem;
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
 }
-
 .contact-info div {
   margin-bottom: 0.5rem;
 }
@@ -287,6 +316,45 @@ footer {
 .contact-actions {
   text-align: left;
 }
+.contact-actions .btn-primary,
+.contact-actions .btn-danger {
+  padding: 6px 6px;
+  width: 80px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.contact-actions .btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.contact-actions .btn-primary:hover {
+  background-color: #0056b3;
+  color: white;
+}
+
+.contact-actions .btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.contact-actions .btn-danger:hover {
+  background-color: #c82333;
+  color: white;
+}
+
+.contact-info div,
+  .contact-actions .btn-primary {
+    display: block;
+    box-sizing: border-box;
+  }
 
 .contact-actions a {
   background-color: #007bff;
@@ -299,14 +367,6 @@ footer {
 
 .contact-actions form {
   display: inline;
-}
-
-.contact-actions button {
-  background-color: #dc3545;
-  color: white;
-  padding: 6px 12px;
-  border: none;
-  border-radius: 4px;
 }
 
 @media (max-width: 768px) {
@@ -326,3 +386,16 @@ footer {
   }
 }
 
+/* Adjust the space above the map */
+#map-container {
+  margin-top: 20px; /* Increase space above the map */
+  height: 400px; /* or any other height */
+}
+
+
+/* Minimal Card Shadow */
+.card.shadow-sm {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+  background-color: white;
+  border-radius: 0.25rem;
+}

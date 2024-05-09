@@ -6,24 +6,35 @@ html(lang="en")
         title Contact List App
         link(rel="stylesheet", href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css")
         link(rel="stylesheet", href="/stylesheets/style.css")
-
+        script(src="https://kit.fontawesome.com/a076d05399.js", crossorigin="anonymous")
+        
         block head
     body
         header
-            nav
-                if user
-                    li
-                        a(href='/') Contact List
-                    li
-                        a(href="/create") Create Contact
-                    li
-                        a(href="/logout") Logout
+            nav.navbar.navbar-expand-lg.navbar-light.bg-light
+                    div#navbarNav.collapse.navbar-collapse
+                        ul.navbar-nav.ms-auto
+                            if user
+                                li.nav-item
+                                    a.nav-link.nav-box(href='/') Contact List
+                                li.nav-item
+                                    a.nav-link.nav-box(href='/create') Create Contact
+                                li.nav-item
+                                    a.nav-link.nav-box(href='/logout') Logout
+                            else
+                                li.nav-item
+                                    a.nav-link.nav-box(href='/') Contact List
+                                li.nav-item
+                                    a.nav-link.nav-box(href='/create') Create Contact
+                                li.nav-item
+                                    a.nav-link.nav-box(href='/login') Login
+                                li.nav-item
+                                    a.nav-link.nav-box(href='/signup') Signup
 
-                else
-                    li
-                        a(href="/login") Login
-                    li
-                        a(href="/signup") Signup
-        block content
+        main.container
+            block content
+
+        script(src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js", integrity="sha384-oBqDVmMz4fnFO9gybU5r53HhZ/ZvK7FnRC6E5D41fhnj5o0fVgtjHmxWkKHQzFXh", crossorigin="anonymous")
+        script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js", integrity="sha384-QJHtvGhmr9J5zvCb8nFty2LNtTKa8aK/T0tz8pR9v9/Tpzt19FIUglrLyjaB6gY", crossorigin="anonymous")
 
         block scripts

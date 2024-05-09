@@ -12,6 +12,24 @@ const geocoder = NodeGeocoder(geocoderOptions);
 class ContactDB {
         // Constructor for the class to initialize the database connection
 
+
+
+        async addUser(firstName, lastName, username, hashedPassword) {
+            console.log('Inserting user into database:', { firstName, lastName, username }); // Log 7
+            const sql = `
+                INSERT INTO users (FirstName, LastName, Username, Password)
+                VALUES (?, ?, ?, ?)
+            `;
+            try {
+                const result = await this.runSql(sql, [firstName, lastName, username, hashedPassword]);
+                console.log('User inserted successfully with ID:', result); // Log 8
+                return result;
+            } catch (error) {
+                console.error('Error inserting user into database:', error); // Log 9
+                throw error;
+            }
+        }
+
     constructor(dbFile) {
         this.db = new sqlite3.Database(dbFile, async (err) => {
             if (err) {
@@ -23,22 +41,45 @@ class ContactDB {
         });
     }
 
+
+
+
+
      // Function to update database schema to add new columns
     async updateSchema() {
         try {
-            await this.runSql('ALTER TABLE contacts ADD COLUMN lat REAL;');
-            await this.runSql('ALTER TABLE contacts ADD COLUMN lng REAL;');
+
+            const formattedAddressExists = await this.columnExists('contacts', 'formattedAddress');
+            if (!formattedAddressExists) {
+                await this.runSql('ALTER TABLE contacts ADD COLUMN formattedAddress TEXT;');
+                console.log('Added "formattedAddress" column to contacts table.');
+            } else {
+                console.log('"formattedAddress" column already exists.');
+            }
         } catch (error) {
             console.error('Error updating schema:', error);
         }
     }
+
+
+    async columnExists(tableName, columnName) {
+        const sql = `
+            SELECT COUNT(*) AS count
+            FROM pragma_table_info(?)
+            WHERE name = ?;
+        `;
+        const result = await this.runGet(sql, [tableName, columnName]);
+        return result && result.count > 0;
+    }
+
+
         // Initializes the database by creating tables and adding test data
 
     async initialize() {
         await this.createTables();
-        //await this.updateSchema();  // Ensures new columns are added after table creation
+        await this.updateSchema();  // Ensures new columns are added after table creation
         await this.ensureDefaultUserExists();
-        await this.addTestContacts(); // Optionally call to add predefined contacts
+        await this.addTestContacts(); 
     }
     // Creates the necessary database tables if they do not exist
     async createTables() {
@@ -59,6 +100,8 @@ class ContactDB {
                 Contact_By_Phone INTEGER,
                 lat REAL,  -- Latitude
                 lng REAL   -- Longitude
+                formattedAddress TEXT -- Geocoded Address
+
             );`;
 
         const createUsersTable = `
@@ -91,23 +134,24 @@ class ContactDB {
     // Adds predefined contact entries to the database if they do not already exist
     async addTestContacts() {
         const contacts = [
-            // Sample contacts with latitude and longitude
             {
                 ID: 1, firstName: 'John', lastName: 'Doe', phoneNumber: '123456789',
                 emailAddress: 'john@example.com', street: '1 Tornado Dr', city: 'Tuxedo',
                 state: 'NY', zip: '10987', country: 'United States',
-                contactByEmail: 1, contactByPhone: 0, lat: 0, lng: 0
+                contactByEmail: 1, contactByPhone: 0, lat: 41.1885435, lng: -74.1852656,
+                formattedAddress: '1 Tornado Dr, Tuxedo, NY, 10987, United States'
             },
             {
                 ID: 2, firstName: 'Jane', lastName: 'Doe', phoneNumber: '987654321',
                 emailAddress: 'jane@example.com', street: '505 Ramapo Valley Rd', city: 'Mahwah',
                 state: 'NJ', zip: '07430', country: 'United States',
-                contactByEmail: 0, contactByPhone: 1, lat: 0, lng: 0
-            },
+                contactByEmail: 0, contactByPhone: 1, lat: 0, lng: 0,
+                formattedAddress: '505 Ramapo Valley Rd, Mahwah, NJ, 07430, United States'
+            }
         ];
-
+    
         const checkSql = `SELECT COUNT(*) AS count FROM contacts WHERE ID = ?`;
-
+    
         for (const contact of contacts) {
             const existingContact = await this.runGet(checkSql, [contact.ID]);
             if (existingContact.count === 0) {
@@ -115,17 +159,23 @@ class ContactDB {
                     INSERT INTO contacts (
                         ID, FirstName, LastName, PhoneNumber, EmailAddress,
                         Street, City, State, Zip, Country, Contact_By_Email,
-                        Contact_By_Phone, lat, lng
+                        Contact_By_Phone, lat, lng, formattedAddress
                     )
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 `;
-                await this.runSql(insertSql, Object.values(contact));
-                console.log(`Contact ${contact.firstName} added.`);
+                await this.runSql(insertSql, [
+                    contact.ID, contact.firstName, contact.lastName, contact.phoneNumber, contact.emailAddress,
+                    contact.street, contact.city, contact.state, contact.zip, contact.country,
+                    contact.contactByEmail, contact.contactByPhone, contact.lat, contact.lng,
+                    contact.formattedAddress 
+                ]);
+                console.log(`Contact ${contact.firstName} added with formatted address.`);
             } else {
                 console.log(`Contact ${contact.firstName} already exists.`);
             }
         }
     }
+
 
     // Helper function to run a query and return a single row
     async runGet(sql, params = []) {
@@ -186,22 +236,30 @@ class ContactDB {
     async addContact(contact) {
         const { firstName, lastName, phoneNumber, emailAddress, street, city, state, zip, country, contactByEmail, contactByPhone } = contact;
         const address = `${street}, ${city}, ${state}, ${zip}, ${country}`;
-    
+        console.log('Attempting to add contact with address:', address); // Log added
+
+
         try {
             const geocodeResult = await geocoder.geocode(address);
+            console.log('Geocode result:', geocodeResult); // Log geocoding result
+
+
             if (geocodeResult.length > 0) {
                 const lat = geocodeResult[0].latitude;
                 const lng = geocodeResult[0].longitude;
+                const formattedAddress = `${geocodeResult[0].streetNumber}, ${geocodeResult[0].streetName}, ${geocodeResult[0].city}, ${geocodeResult[0].state}, ${geocodeResult[0].zipcode}, ${geocodeResult[0].countryCode}`; // <== Change here
+
     
                 const sql = `
                     INSERT INTO contacts (
                         FirstName, LastName, PhoneNumber, EmailAddress, Street, City, State, Zip, Country,
-                        Contact_By_Email, Contact_By_Phone, lat, lng
+                        Contact_By_Email, Contact_By_Phone, lat, lng, formattedAddress
                     )
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 `;
-                await this.runSql(sql, [firstName, lastName, phoneNumber, emailAddress, street, city, state, zip, country, contactByEmail, contactByPhone, lat, lng]);
-                console.log(`Contact ${firstName} ${lastName} added with coordinates.`);
+                const contactId = await this.runSql(sql, [firstName, lastName, phoneNumber, emailAddress, street, city, state, zip, country, contactByEmail, contactByPhone, lat, lng, formattedAddress]);
+                console.log(`Contact ${firstName} ${lastName} added with coordinates and formatted address: ${formattedAddress}.`); // Log success
+                return contactId; // Return the inserted contact's ID
             } else {
                 throw new Error('Geocoding failed, no results found.');
             }
@@ -234,24 +292,27 @@ class ContactDB {
     
         try {
             const geocodeResult = await geocoder.geocode(address);
+            console.log('Geocode result:', geocodeResult); // Log geocoding result
+
             if (geocodeResult.length > 0) {
                 const lat = geocodeResult[0].latitude;
                 const lng = geocodeResult[0].longitude;
-    
+                const formattedAddress = `${geocodeResult[0].streetNumber}, ${geocodeResult[0].streetName}, ${geocodeResult[0].city}, ${geocodeResult[0].state}, ${geocodeResult[0].zipcode}, ${geocodeResult[0].countryCode}`; // <== Change here
+
+
                 const sql = `
                     UPDATE contacts SET
                         FirstName = ?, LastName = ?, PhoneNumber = ?, EmailAddress = ?,
                         Street = ?, City = ?, State = ?, Zip = ?, Country = ?,
-                        Contact_By_Email = ?, Contact_By_Phone = ?, lat = ?, lng = ?
+                        Contact_By_Email = ?, Contact_By_Phone = ?, lat = ?, lng = ?, formattedAddress = ?
                     WHERE ID = ?
                 `;
-                await this.runSql(sql, [firstName, lastName, phoneNumber, emailAddress, street, city, state, zip, country, contactByEmail, contactByPhone, lat, lng, id]);
-                console.log(`Contact ${firstName} ${lastName} updated with new coordinates.`);
+                await this.runSql(sql, [firstName, lastName, phoneNumber, emailAddress, street, city, state, zip, country, contactByEmail, contactByPhone, lat, lng, formattedAddress, id]);
+                console.log(`Contact ${firstName} ${lastName} updated with new coordinates and formatted address: ${formattedAddress}.`); // Log success
 
             } else {
                 console.error('Geocoding failed, no results found for address:', address);
-                // Here you can choose to proceed without updating lat/lng or handle it differently
-                // For now, let's update without new coordinates
+
                 const sqlWithoutGeo = `
                     UPDATE contacts SET
                         FirstName = ?, LastName = ?, PhoneNumber = ?, EmailAddress = ?,
@@ -284,13 +345,14 @@ class ContactDB {
 
     // Retrieves all contacts from the database
     async getAllContacts() {
+        const sql = `SELECT * FROM contacts`;
         return new Promise((resolve, reject) => {
-            const sql = `SELECT * FROM contacts`;
             this.db.all(sql, [], (err, rows) => {
                 if (err) {
                     console.error('Error fetching contacts:', err);
                     reject(err);
                 } else {
+                    console.log('Fetched contacts:', rows); // Log all contacts
                     resolve(rows);
                 }
             });

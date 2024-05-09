@@ -4,42 +4,42 @@ block content
   h1.text-center.mb-4 Create Contact
   .container.mt-5
     .row.justify-content-center
-      .col-lg-6.col-md-8.p-4(style='background-color: #eee;')
+      .col-lg-6.col-md-8.p-4(style='background-color: #white;')
         form(method='POST', action='/create')
           input(type="hidden", name="_csrf", value=csrfToken)
           
           .form-floating.mb-3
             input.form-control(type='text', name='firstName', id='firstName', placeholder='', required)
-            label(for='firstName') First Name
+            label(for='firstName') First Name*
           
           .form-floating.mb-3
             input.form-control(type='text', name='lastName', id='lastName', placeholder='', required)
-            label(for='lastName') Last Name
+            label(for='lastName') Last Name*
 
           .form-floating.mb-3
-            input.form-control(type='tel', name='phoneNumber', id='phoneNumber', placeholder='')
-            label(for='phoneNumber') Phone Number
+            input.form-control(type='tel', name='phoneNumber', id='phoneNumber', placeholder='', required)
+            label(for='phoneNumber') Phone Number*
 
           .form-floating.mb-3
-            input.form-control(type='email', name='emailAddress', id='emailAddress', placeholder='')
-            label(for='emailAddress') Email Address
+            input.form-control(type='email', name='emailAddress', id='emailAddress', placeholder='', required)
+            label(for='emailAddress') Email Address*
 
           .form-floating.mb-3
-            input.form-control(type='text', name='street', id='street', placeholder='')
-            label(for='street') Street
+            input.form-control(type='text', name='street', id='street', placeholder='', required)
+            label(for='street') Street*
 
           .form-floating.mb-3
-            input.form-control(type='text', name='city', id='city', placeholder='')
-            label(for='city') City
+            input.form-control(type='text', name='city', id='city', placeholder='', required)
+            label(for='city') City*
 
           .row.g-2.mb-3
             .col-md-6
               .form-floating
-                input.form-control(type='text', name='state', id='state', placeholder='', required)
+                input.form-control(type='text', name='state', id='state', placeholder='')
                 label(for='state') State
             .col-md-6
               .form-floating
-                input.form-control(type='text', name='zip', id='zip', placeholder='', required)
+                input.form-control(type='text', name='zip', id='zip', placeholder='')
                 label(for='zip') Zip
 
           .form-floating.mb-3

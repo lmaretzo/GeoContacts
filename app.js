@@ -11,8 +11,10 @@ const NodeGeocoder = require('node-geocoder');
 
 const app = express();
 
+
+
 const geocoderOptions = {
-    provider: 'openstreetmap' // or 'google', 'bing', etc., depending on what you have access to
+    provider: 'openstreetmap' 
   };
   const geocoder = NodeGeocoder(geocoderOptions);
   
@@ -32,7 +34,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 
 app.use(session({
-    secret: 'password', // I Hardcoded secret for testing purposes
+    secret: 'password', 
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -44,6 +46,8 @@ app.use(session({
 
 app.use(cookieParser());
 app.use(csrf({ cookie: true }));
+
+
 const methodOverride = require('method-override');
 app.use(methodOverride('_method'));   
 
@@ -72,6 +76,7 @@ function requireLogin(req, res, next) {
 app.get('/', async (req, res) => {
     try {
         const contacts = await db.getAllContacts();
+        console.log('Fetched Contacts:', contacts); 
         res.render('index', { contacts, csrfToken: req.csrfToken(), user: req.session.userId });
     } catch (err) {
         console.error(err);
@@ -170,7 +175,7 @@ app.get('/login', (req, res) => {
 });
 
 
-app.get('/create', requireLogin, (req, res) => {
+app.get('/create', (req, res) => {
     res.render('create', {
         csrfToken: req.csrfToken(),
         user: req.session.userId
@@ -347,7 +352,7 @@ app.post('/create', [
         res.redirect(`/contact/${newContactId}`);
     } catch (err) {
         console.error(err);
-        res.status(500).render('error', { error: 'Error creating contact. Please try again.', csrfToken: req.csrfToken() });
+        res.status(500).render('error', { error: 'Error creating contact. Please try again.', csrfToken: req.csrfToken(), user: req.session.userId });
     }
 });
 
@@ -468,9 +473,12 @@ app.post('/signup', [
         min: 6
     }).withMessage('Password must be at least 6 characters long.')
 ], async (req, res) => {
+    console.log('Entering POST /signup route'); // Log 1
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
+        console.log('Validation errors:', errors.array()); // Log 2
+
         return res.render('signup', {
             errors: errors.array(),
             csrfToken: req.csrfToken()
@@ -483,17 +491,22 @@ app.post('/signup', [
         username,
         password
     } = req.body;
+    console.log('Received sign-up data:', { firstName, lastName, username }); // Log 3
+
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    console.log('Hashed password generated'); // Log 4
 
     try {
         const userId = await db.addUser(firstName, lastName, username, hashedPassword);
+        console.log('User created with ID:', userId); // Log 5
+
         req.session.userId = userId;
         res.redirect('/');
     } 
     
     catch (err) {
-        console.error(err);
+        console.error('Error creating user:', err); // Log 6
 
         res.render('signup', {
             error: 'Error creating account. Please try again.',

@@ -8,7 +8,9 @@ block content
       div Name: #{contact.FirstName} #{contact.LastName}
       div Phone: #{contact.PhoneNumber}
       div Email: #{contact.EmailAddress}
-      div Address: #{contact.Street}, #{contact.City}, #{contact.State}, #{contact.Zip}, #{contact.Country}
+      div Address: #{contact.formattedAddress} 
+      div Latitude: #{contact.lat} 
+      div Longitude: #{contact.lng}
       div Contact Preferences: 
         if contact.Contact_By_Email
           | Email 
@@ -16,13 +18,13 @@ block content
           | Phone
 
     .contact-actions
-      a(href=`/contact/${contact.ID}/edit`) Edit
+      a.btn-primary(href=`/contact/${contact.ID}/edit`) Edit
       form(method="POST", action=`/contact/${contact.ID}/delete?_csrf=${csrfToken}`)
-        button(type='submit') Delete
+        button.btn-danger(type='submit') Delete
 
   // Add map container
   #map-container
-    #map(style='height: 400px;') // Set a height for the map
+    #map(style='height: 650px;') 
 
   // Include Leaflet CSS and JS
   link(rel='stylesheet' href='https://unpkg.com/leaflet@1.9.3/dist/leaflet.css')
