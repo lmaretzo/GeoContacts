@@ -1,23 +1,17 @@
 const express = require('express');
 const path = require('path');
 const db = require('./db');
+const geocode = require('./geocode'); // Import the geocode function
+
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const csrf = require('csurf');
 const bcrypt = require('bcryptjs');
 const { body, validationResult } = require('express-validator');
-const NodeGeocoder = require('node-geocoder');
-
+const axios = require('axios');
 
 const app = express();
 
-
-
-const geocoderOptions = {
-    provider: 'openstreetmap' 
-  };
-  const geocoder = NodeGeocoder(geocoderOptions);
-  
 
 app.use((req, res, next) => {
     console.log('Session Cookie:', req.sessionID);
@@ -136,12 +130,13 @@ app.post('/contact/:id/edit', async (req, res) => {
         const address = `${req.body.street}, ${req.body.city}, ${req.body.state}, ${req.body.zip}, ${req.body.country}`;
         console.log('Address for geocoding:', address); // Verify the address format
 
-        const geocodeResult = await geocoder.geocode(address);
-        if (geocodeResult.length) {
-            req.body.lat = geocodeResult[0].latitude;
-            req.body.lng = geocodeResult[0].longitude;
-        } else {
-            console.error('Geocoding failed, no results found for address:', address);
+        try {
+            const { latitude, longitude, formattedAddress } = await geocode(address);
+            req.body.lat = latitude;
+            req.body.lng = longitude;
+            req.body.formattedAddress = formattedAddress;
+        } catch (error) {
+            console.error('Geocoding failed:', error.message);
             return res.status(500).render('edit', {
                 contact: req.body,
                 error: 'Geocoding failed, no results found.',
@@ -149,6 +144,7 @@ app.post('/contact/:id/edit', async (req, res) => {
                 user: req.session.userId
             });
         }
+        
 
         await db.updateContact(req.params.id, req.body);
         res.redirect(`/contact/${req.params.id}`);
@@ -183,130 +179,8 @@ app.get('/create', (req, res) => {
 });
 
 
-app.post('/contact/:id/edit', [
-body('firstName').trim().escape().notEmpty().withMessage('First Name is required.'),
-body('lastName').trim().escape().notEmpty().withMessage('Last Name is required.'),
-body('phoneNumber').trim().escape(),
-body('emailAddress').trim().escape().isEmail().withMessage('Invalid email address.'),
-body('street').trim().escape(),
-body('city').trim().escape(),
-body('state').trim().escape(),
-body('zip').trim().escape(),
-body('country').trim().escape(),
-body('contactByEmail').toBoolean(),
-body('contactByPhone').toBoolean()
-], async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(422).render('edit', {
-            errors: errors.array(),
-            contact: req.body,
-            csrfToken: req.csrfToken(),
-            user: req.session.userId
-        });
-    }
-
-    try {
-        const address = `${req.body.street}, ${req.body.city}, ${req.body.state}, ${req.body.zip}, ${req.body.country}`;
-        const geocodeResult = await geocoder.geocode(address);
-        if (geocodeResult.length) {
-            req.body.lat = geocodeResult[0].latitude;
-            req.body.lng = geocodeResult[0].longitude;
-        } else {
-            req.flash('errors', 'Failed to geocode address');
-            return res.redirect('back');
-        }
-
-        await db.updateContact(
-            req.params.id,
-            req.body.firstName,
-            req.body.lastName,
-            req.body.phoneNumber,
-            req.body.emailAddress,
-            req.body.street,
-            req.body.city,
-            req.body.state,
-            req.body.zip,
-            req.body.country,
-            req.body.contactByEmail ? 1 : 0,
-            req.body.contactByPhone ? 1 : 0,
-            req.body.lat,
-            req.body.lng
-        );
-
-        res.redirect(`/contact/${req.params.id}`);
-    } catch (err) {
-        console.error(err);
-        res.status(500).render('edit', {
-            contact: req.body,
-            error: 'Error updating contact. Please try again.',
-            csrfToken: req.csrfToken(),
-            user: req.session.userId
-        });
-    }
-});
 
 
-
-app.post('/contact/:id/edit', [
-
-    body('firstName').trim().escape().notEmpty().withMessage('First Name is required.'),
-    body('lastName').trim().escape().notEmpty().withMessage('Last Name is required.'),
-    body('phoneNumber').trim().escape(),
-    body('emailAddress').trim().escape().isEmail().withMessage('Invalid email address.'),
-    body('street').trim().escape(),
-    body('city').trim().escape(),
-    body('state').trim().escape(),
-    body('zip').trim().escape(),
-    body('country').trim().escape(),
-    body('contactByEmail').toBoolean(),
-    body('contactByPhone').toBoolean()
-
-], 
-
-async (req, res) => {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-        return res.status(422).render('edit', {
-            errors: errors.array(),
-            contact: req.body,
-            csrfToken: req.csrfToken(),
-            user: req.session.userId
-        });
-    }
-
-    try {
-        await db.updateContact(
-            req.params.id,
-            req.body.firstName,
-            req.body.lastName,
-            req.body.phoneNumber,
-            req.body.emailAddress,
-            req.body.street,
-            req.body.city,
-            req.body.state,
-            req.body.zip,
-            req.body.country,
-            req.body.contactByEmail ? 1 : 0,
-            req.body.contactByPhone ? 1 : 0
-        );
-
-        res.redirect(`/contact/${req.params.id}`);
-
-    } catch (err) {
-
-        console.error(err);
-
-        res.status(500).render('edit', {
-            contact: req.body,
-            error: 'Error updating contact. Please try again.',
-
-            csrfToken: req.csrfToken(),
-            user: req.session.userId
-        });
-    }
-});
 
 app.post('/create', [
     body('firstName').trim().escape().notEmpty().withMessage('First Name is required.'),
@@ -340,13 +214,16 @@ app.post('/create', [
     console.log('req.body:', req.body); // for debugging
     try {
         const address = `${req.body.street}, ${req.body.city}, ${req.body.state}, ${req.body.zip}, ${req.body.country}`;
-        const geocodeResult = await geocoder.geocode(address);
-        if (geocodeResult.length) {
-            req.body.lat = geocodeResult[0].latitude;
-            req.body.lng = geocodeResult[0].longitude;
-        } else {
-            throw new Error('Geocoding failed');
-        }
+
+       try {
+    const { latitude, longitude, formattedAddress } = await geocode(address);
+    req.body.lat = latitude;
+    req.body.lng = longitude;
+    req.body.formattedAddress = formattedAddress;
+} catch (error) {
+    throw new Error('Geocoding failed: ' + error.message);
+}
+
 
         const newContactId = await db.addContact(req.body);
         res.redirect(`/contact/${newContactId}`);
@@ -356,56 +233,6 @@ app.post('/create', [
     }
 });
 
-app.post('/:id/edit', [
-    body('firstName').trim().escape().notEmpty().withMessage('First Name is required.'),
-    body('lastName').trim().escape().notEmpty().withMessage('Last Name is required.'),
-    body('phoneNumber').trim().escape(),
-    body('emailAddress').trim().escape().isEmail().withMessage('Invalid email address.'),
-    body('street').trim().escape(),
-    body('city').trim().escape(),
-    body('state').trim().escape(),
-    body('zip').trim().escape(),
-    body('country').trim().escape(),
-    body('contactByEmail').toBoolean(),
-    body('contactByPhone').toBoolean()
-
-
-], async (req, res) => {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-        return res.render('edit', {
-            errors: errors.array(),
-            contact: req.body
-        });
-    }
-
-    try {
-        await db.updateContact(
-            req.params.id,
-            req.body.firstName,
-            req.body.lastName,
-            req.body.phoneNumber,
-            req.body.emailAddress,
-            req.body.street,
-            req.body.city,
-            req.body.state,
-            req.body.zip,
-            req.body.country,
-            req.body.contactByEmail ? 1 : 0,
-            req.body.contactByPhone ? 1 : 0
-        );
-
-        res.redirect(`/${req.params.id}`);
-
-    } catch (err) {
-        console.error(err);
-        res.render('edit', {
-            contact: req.body,
-            error: 'Error updating contact. Please try again.'
-        });
-    }
-});
 
 app.delete('/:id/delete', async (req, res) => {
     try {
@@ -535,3 +362,4 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`);
 });
+

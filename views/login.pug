@@ -3,22 +3,23 @@ extends layout
 block content
   .login-container
     .login-form(style='margin-top: 2rem;') 
-      h1.text-center.mb-4 Login
-
+      h1.text-center.mb-4 Log In
+      if error
+        .alert.alert-danger= error
       form(method='POST', action='/login')
         input(type='hidden', name='_csrf', value=csrfToken)
 
         .form-floating.mb-3
-          input.form-control(type='text', name='username', id='username', placeholder=' ', required)
+          input.form-control(type='text', name='username', id='username', placeholder='', required)
           label(for='username') Username
 
         .form-floating.mb-3
-          input.form-control(type='password', name='password', id='password', placeholder=' ', required)
+          input.form-control(type='password', name='password', id='password', placeholder='', required)
           label(for='password') Password
 
-        if error
-          .alert.alert-danger= error
+        .form-check.form-switch.mb-3
+          input.form-check-input(type='checkbox', name='rememberMe', id='rememberMe')
+          label.form-check-label(for='rememberMe') Remember Me
 
         .d-grid.gap-2
-          button.btn.btn-primary.btn-lg.btn-block(type='submit') Log In
-          button.btn.btn-secondary.btn-lg.btn-block(type='button', onclick="location.href='/signup'") Sign Up
+          button.btn.btn-primary(style="width: 150%; max-width: 300px; margin: 0 auto; margin-top: 5px;",type='submit') Log In

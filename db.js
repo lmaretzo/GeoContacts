@@ -1,13 +1,8 @@
 const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcryptjs');
 const fs = require('fs');
-const NodeGeocoder = require('node-geocoder');
-const geocoderOptions = {
-    provider: 'openstreetmap',
-    httpAdapter: 'https', // Default
-    formatter: null         // 'gpx', 'string', ...
-};
-const geocoder = NodeGeocoder(geocoderOptions);
+const geocode = require('./geocode'); // Import the geocode function from the new file
+
 
 class ContactDB {
         // Constructor for the class to initialize the database connection
@@ -99,7 +94,7 @@ class ContactDB {
                 Contact_By_Email INTEGER,
                 Contact_By_Phone INTEGER,
                 lat REAL,  -- Latitude
-                lng REAL   -- Longitude
+                lng REAL,   -- Longitude
                 formattedAddress TEXT -- Geocoded Address
 
             );`;
@@ -157,14 +152,14 @@ class ContactDB {
             if (existingContact.count === 0) {
                 const insertSql = `
                     INSERT INTO contacts (
-                        ID, FirstName, LastName, PhoneNumber, EmailAddress,
+                        FirstName, LastName, PhoneNumber, EmailAddress,
                         Street, City, State, Zip, Country, Contact_By_Email,
                         Contact_By_Phone, lat, lng, formattedAddress
                     )
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 `;
                 await this.runSql(insertSql, [
-                    contact.ID, contact.firstName, contact.lastName, contact.phoneNumber, contact.emailAddress,
+                    contact.firstName, contact.lastName, contact.phoneNumber, contact.emailAddress,
                     contact.street, contact.city, contact.state, contact.zip, contact.country,
                     contact.contactByEmail, contact.contactByPhone, contact.lat, contact.lng,
                     contact.formattedAddress 
@@ -237,32 +232,22 @@ class ContactDB {
         const { firstName, lastName, phoneNumber, emailAddress, street, city, state, zip, country, contactByEmail, contactByPhone } = contact;
         const address = `${street}, ${city}, ${state}, ${zip}, ${country}`;
         console.log('Attempting to add contact with address:', address); // Log added
-
-
-        try {
-            const geocodeResult = await geocoder.geocode(address);
-            console.log('Geocode result:', geocodeResult); // Log geocoding result
-
-
-            if (geocodeResult.length > 0) {
-                const lat = geocodeResult[0].latitude;
-                const lng = geocodeResult[0].longitude;
-                const formattedAddress = `${geocodeResult[0].streetNumber}, ${geocodeResult[0].streetName}, ${geocodeResult[0].city}, ${geocodeResult[0].state}, ${geocodeResult[0].zipcode}, ${geocodeResult[0].countryCode}`; // <== Change here
-
     
-                const sql = `
-                    INSERT INTO contacts (
-                        FirstName, LastName, PhoneNumber, EmailAddress, Street, City, State, Zip, Country,
-                        Contact_By_Email, Contact_By_Phone, lat, lng, formattedAddress
-                    )
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                `;
-                const contactId = await this.runSql(sql, [firstName, lastName, phoneNumber, emailAddress, street, city, state, zip, country, contactByEmail, contactByPhone, lat, lng, formattedAddress]);
-                console.log(`Contact ${firstName} ${lastName} added with coordinates and formatted address: ${formattedAddress}.`); // Log success
-                return contactId; // Return the inserted contact's ID
-            } else {
-                throw new Error('Geocoding failed, no results found.');
-            }
+        try {
+            const { latitude, longitude, formattedAddress } = await geocode(address);
+            const lat = latitude;
+            const lng = longitude;
+            console.log(`Contact ${firstName} ${lastName} added with coordinates and formatted address: ${formattedAddress}.`); // Log success
+    
+            const sql = `
+                INSERT INTO contacts (
+                    FirstName, LastName, PhoneNumber, EmailAddress, Street, City, State, Zip, Country,
+                    Contact_By_Email, Contact_By_Phone, lat, lng, formattedAddress
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `;
+            const contactId = await this.runSql(sql, [firstName, lastName, phoneNumber, emailAddress, street, city, state, zip, country, contactByEmail, contactByPhone, lat, lng, formattedAddress]);
+            return contactId; // Return the inserted contact's ID
         } catch (error) {
             console.error('Error adding contact with geocoding:', error);
             throw error;
@@ -289,45 +274,27 @@ class ContactDB {
     async updateContact(id, contact) {
         const { firstName, lastName, phoneNumber, emailAddress, street, city, state, zip, country, contactByEmail, contactByPhone } = contact;
         const address = `${street}, ${city}, ${state}, ${zip}, ${country}`;
-    
+        
         try {
-            const geocodeResult = await geocoder.geocode(address);
-            console.log('Geocode result:', geocodeResult); // Log geocoding result
-
-            if (geocodeResult.length > 0) {
-                const lat = geocodeResult[0].latitude;
-                const lng = geocodeResult[0].longitude;
-                const formattedAddress = `${geocodeResult[0].streetNumber}, ${geocodeResult[0].streetName}, ${geocodeResult[0].city}, ${geocodeResult[0].state}, ${geocodeResult[0].zipcode}, ${geocodeResult[0].countryCode}`; // <== Change here
-
-
-                const sql = `
-                    UPDATE contacts SET
-                        FirstName = ?, LastName = ?, PhoneNumber = ?, EmailAddress = ?,
-                        Street = ?, City = ?, State = ?, Zip = ?, Country = ?,
-                        Contact_By_Email = ?, Contact_By_Phone = ?, lat = ?, lng = ?, formattedAddress = ?
-                    WHERE ID = ?
-                `;
-                await this.runSql(sql, [firstName, lastName, phoneNumber, emailAddress, street, city, state, zip, country, contactByEmail, contactByPhone, lat, lng, formattedAddress, id]);
-                console.log(`Contact ${firstName} ${lastName} updated with new coordinates and formatted address: ${formattedAddress}.`); // Log success
-
-            } else {
-                console.error('Geocoding failed, no results found for address:', address);
-
-                const sqlWithoutGeo = `
-                    UPDATE contacts SET
-                        FirstName = ?, LastName = ?, PhoneNumber = ?, EmailAddress = ?,
-                        Street = ?, City = ?, State = ?, Zip = ?, Country = ?,
-                        Contact_By_Email = ?, Contact_By_Phone = ?
-                    WHERE ID = ?
-                `;
-                await this.runSql(sqlWithoutGeo, [firstName, lastName, phoneNumber, emailAddress, street, city, state, zip, country, contactByEmail, contactByPhone, id]);
-                console.log(`Updated contact without new coordinates due to geocode failure.`);
-            }
+            const { latitude, longitude, formattedAddress } = await geocode(address);
+            const lat = latitude;
+            const lng = longitude;
+            console.log(`Contact ${firstName} ${lastName} updated with new coordinates and formatted address: ${formattedAddress}.`); // Log success
+    
+            const sql = `
+                UPDATE contacts SET
+                    FirstName = ?, LastName = ?, PhoneNumber = ?, EmailAddress = ?,
+                    Street = ?, City = ?, State = ?, Zip = ?, Country = ?,
+                    Contact_By_Email = ?, Contact_By_Phone = ?, lat = ?, lng = ?, formattedAddress = ?
+                WHERE ID = ?
+            `;
+            await this.runSql(sql, [firstName, lastName, phoneNumber, emailAddress, street, city, state, zip, country, contactByEmail, contactByPhone, lat, lng, formattedAddress, id]);
         } catch (error) {
             console.error('Error updating contact with geocoding:', error);
             throw error;
         }
     }
+    
     // Deletes a contact from the database using the contact's ID
     async deleteContact(id) {
         return new Promise((resolve, reject) => {

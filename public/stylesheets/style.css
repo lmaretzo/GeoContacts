@@ -1,27 +1,19 @@
+/* Global styles */
 html, body {
   margin: 0;
   padding: 0;
   height: 100%;
-}
-
-body {
-  font-family: 'Arial', sans-serif;
   background: #ffffff;
-  margin: 0; /* No margin for the body */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 14px;
+  color: #333333;
 }
 
-header {
-  padding: 0;
-  background: #989a9c;
-  margin: 0; 
-  width: 100%; 
-  box-sizing: border-box; 
-}
-
+/* Navigation styles */
 nav {
   background-color: #f8f9fa;
-  box-shadow: 0 2px 4px rgba(0,0,0,.1);
-  padding: 15px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
+  padding: 10px 0;
 }
 
 nav ul {
@@ -40,10 +32,10 @@ nav li {
 nav a {
   text-decoration: none;
   color: #007bff;
-  padding: 8px 16px;
+  padding: 6px 12px;
   background-color: #e9ecef;
   border: 1px solid #dee2e6;
-  border-radius: 5px;
+  border-radius: 3px;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
@@ -51,43 +43,67 @@ nav a:hover {
   background-color: #007bff;
   color: white;
 }
-.navbar-brand {
-  display: inline-block;
-  margin: 0 auto;
-  font-weight: bold;
-  color: #007bff;
-  text-align: center;
-  padding: 10px;
-  background-color: #e9ecef;
-  border: 1px solid #dee2e6;
-  border-radius: 5px;
+
+/* Standardize button styles */
+button, .btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 3px;
+  font-size: 14px;
+  cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.navbar-brand:hover {
+.btn-primary {
   background-color: #007bff;
   color: white;
 }
 
-
-h1 {
-  color: #333;
-  margin-top: 20px;
+.btn-primary:hover {
+  background-color: #0056b3;
 }
 
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
 
-/* Form styling */
+.btn-secondary:hover {
+  background-color: #545b62;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+}
+
+/* Standardize form input styles */
 .form-control {
+  width: 100%;
   padding: .375rem .75rem;
-  font-size: 0.875rem;
+  font-size: 1rem;
   line-height: 1.5;
-  height: auto;
-  border-radius: .25rem;
-  background-color: #e9ecef;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
   border: 1px solid #ced4da;
+  border-radius: .25rem;
+  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
 }
 
-/* Custom styling for floating labels */
+.form-control:focus {
+  color: #495057;
+  background-color: #fff;
+  border-color: #80bdff;
+  outline: 0;
+  box-shadow: 0 0 0 .2rem rgba(0,123,255,.25);
+}
+
+/* Floating label styles */
 .form-floating {
   margin-bottom: 1.5rem;
   position: relative;
@@ -99,11 +115,6 @@ h1 {
   background-color: #f8f9fa;
   border: 1px solid #ced4da;
   border-radius: .25rem;
-}
-
-.form-floating > .form-control:focus {
-  border-color: #3e99fb;
-  box-shadow: 0 0 0 .2rem rgba(0, 123, 255, .25);
 }
 
 .form-floating > label {
@@ -119,186 +130,114 @@ h1 {
 }
 
 .form-floating > .form-control:focus::placeholder {
-  opacity: 0; /* Ensures placeholder is not seen. */
+  opacity: 0;
 }
 
 .form-floating > .form-control:not(:placeholder-shown) ~ label,
 .form-floating > .form-control:focus ~ label {
   opacity: 1;
   top: -1.5rem;
-  left: 0rem; 
+  left: 0rem;
   font-size: .75rem;
 }
 
-@media (min-width: 768px) { /* For medium-sized screens and up */
-  .half-width {
-    display: flex;
-  }
-  
-  .half-width .form-floating {
-    flex: 1;
-    margin-right: 0.5rem; /* Space between state and zip inputs. Could not implement */
-  }
-  
-  .half-width .form-floating:last-child {
-    margin-right: 0;
-  }
-}
-.form-control {
-  width: 100%; 
-
-}
-
-footer {
-  text-align: center;
+/* Container styles */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 20px;
-  background-color: #f5f5f5;
-  position: relative;
-  bottom: 0;
-  width: 100%;
 }
 
-.error {
-  color: red;
-  text-align: center;
-}
-
-.form-check-input {
-  width: 1em;
-  height: 1em;
-  margin-top: .25em;
-  vertical-align: middle;
+/* Contact info container */
+.contact-info-container, .login-form, .create-form, .edit-form {
   background-color: #f8f9fa;
-  border: 1px solid #adb5bd;
-}
-
-.form-check-input:checked {
-  background-color: #0d6efd;
-  border-color: #0d6efd;
-}
-
-.form-check-label {
-  margin-left: .5rem;
-}
-
-/* Styles for the login container */
-.login-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh; 
-}
-
-/* Styles for the login form */
-.login-form {
-  background-color: #f8f9fa; 
-  padding: 2rem;
+  padding: 1rem;
   border-radius: 0.25rem;
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
-  max-width: 400px;
-  width: 100%;
-  margin: auto;
 }
 
-/* Styles for the form buttons */
-.login-form button {
-  width: 100%; 
-  padding: 10px;
-  font-size: 1rem;
-  margin-top: 1rem;
-  border: none;
-  border-radius: .25rem;
+/* Heading styles */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin-top: 20px;
+  color: #333;
+  text-align: center;
 }
 
-/* Style for the primary Log on button */
-.login-form button[type='submit'] {
-  background-color: #007bff; 
-  color: white;
+h1 {
+  font-size: 36px;
 }
 
-
-.login-form button[type='button'] {
-  background-color: #6c757d; 
-  color: white;
-  margin-top: .5rem;
+h2 {
+  font-size: 30px;
 }
 
-.login-form button:hover {
-  opacity: 0.9;
-}
-
+/* List styles */
 .contacts-list {
   padding: 0;
   list-style-type: none;
-  margin-bottom: 30px; 
+  margin-bottom: 30px;
 }
 
-.contacts-list-header,
-.contacts-list-item {
+.contacts-list-header, .contacts-list-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #ddd; 
-  padding: 0.75rem; 
+  border-bottom: 1px solid #ddd;
+  padding: 0.75rem;
 }
 
 .contacts-list-header {
-  background-color: #f8f8f8; 
+  background-color: #f8f8f8;
   font-weight: bold;
 }
 
-.contacts-list-item div {
-  margin-right: 1rem; 
-}
-
-.contacts-list-item-actions {
-  align-self: flex-end; /* Align the actions to the bottom */
-  padding-top: 0.5rem;
-}
-
-
-
 .contacts-list-item:nth-child(even) {
-  background-color: #f2f2f2; 
+  background-color: #f2f2f2;
 }
 
 .contacts-list-item:hover {
-  background-color: #e8e8e8; 
+  background-color: #e8e8e8;
 }
 
-.contacts-list div {
-  flex: 1 1 20%; 
-  margin: 0 30px;
+/* Error messages and alerts */
+.alert {
+  padding: 15px;
+  background-color: #f44336;
+  color: white;
+  margin-bottom: 20px;
+  border-radius: 4px;
 }
 
-.contacts-list a {
-  text-decoration: none;
-  color: #0056b3; 
+.alert-danger {
+  background-color: #f44336;
 }
-
-.contacts-list a:hover {
-  text-decoration: underline; 
-}
-
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .contacts-list-header,
-  .contacts-list-item {
+  .contacts-list-header, .contacts-list-item {
     flex-direction: column;
     align-items: flex-start;
   }
 
   .contacts-list div {
-    flex-basis: 100%; 
-    margin: 5px 0; /* Reduce spacing */
+    flex-basis: 100%;
+    margin: 5px 0;
   }
 
-  /* Adjust font sizes for smaller screens */
   body, .contacts-list-header, .contacts-list-item {
     font-size: smaller;
   }
+}
+
+/* Specific adjustments for improved design */
+.contacts-list-item-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+#map-container {
+  height: 600px;
 }
 
 .contact-info-container {
@@ -309,35 +248,128 @@ footer {
   border-radius: 0.25rem;
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
 }
+
 .contact-info div {
   margin-bottom: 0.5rem;
 }
 
 .contact-actions {
-  text-align: left;
+  display: flex;
+  justify-content: center;
 }
-.contact-actions .btn-primary,
-.contact-actions .btn-danger {
-  padding: 6px 6px;
-  width: 80px;
-  text-align: center;
-  text-decoration: none;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
-  display: inline-block;
-  margin-right: 5px;
-  margin-bottom: 5px;
-  transition: background-color 0.2s ease, color 0.2s ease;
+
+.form-check-label {
+  margin-left: .5rem;
 }
-.contact-actions .btn-primary {
+
+.login-container, .signup-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 80vh; /* Adjusted to move the box up */
+  margin-top: -120px; /* Adjusted to move the box up */
+}
+
+.login-form, .signup-form {
+  background-color: #f8f9fa;
+  padding: 2rem;
+  border-radius: 0.25rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  width: 70%;
+}
+
+button[type='submit'] {
   background-color: #007bff;
   color: white;
 }
 
-.contact-actions .btn-primary:hover {
+button[type='submit']:hover {
   background-color: #0056b3;
+}
+
+/* Search container */
+.search-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.search-container input, .search-container select, .search-container button {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 14px;
+}
+
+.search-container button {
+  background-color: #4CAF50;
   color: white;
+  cursor: pointer;
+}
+
+.search-container button:hover {
+  background-color: #45a049;
+}
+
+/* Adjustments for view/edit contact page */
+.contact-info-container h1 {
+  text-align: center;
+}
+
+.contact-actions a {
+  margin: 5px;
+  text-decoration: none;
+}
+
+.contact-actions a:hover {
+  opacity: 0.8;
+}
+
+/* Form styles for edit contact page */
+.edit-form h1 {
+  text-align: center;
+}
+
+/* Adjustments for login/signup pages */
+.login-container, .signup-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.login-form, .signup-form {
+  max-width: 400px;
+  width: 100%;
+  background-color: #f8f9fa;
+  padding: 2rem;
+  border-radius: 0.25rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+}
+
+button[type='submit'] {
+  background-color: #007bff;
+  color: white;
+}
+
+button[type='submit']:hover {
+  background-color: #0056b3;
+}
+
+/* Button sizes */
+.contact-actions a,
+.contact-actions button {
+  width: 60px;
+  height: 28px;
+  line-height: 38px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .contact-actions .btn-danger {
@@ -347,55 +379,86 @@ footer {
 
 .contact-actions .btn-danger:hover {
   background-color: #c82333;
-  color: white;
 }
 
-.contact-info div,
-  .contact-actions .btn-primary {
-    display: block;
-    box-sizing: border-box;
-  }
-
-.contact-actions a {
-  background-color: #007bff;
-  color: white;
-  padding: 6px 12px;
-  text-decoration: none;
-  border-radius: 4px;
-  margin-right: 5px;
+.contacts-list-header div, .contacts-list-item div {
+  display: inline-block;
+  width: 16.6%; /* Adjust percentage based on the number of columns */
+  vertical-align: middle;
+  text-align: center;
 }
 
-.contact-actions form {
-  display: inline;
+.contacts-list-header div.header-cell, .contacts-list-item div.cell {
+  padding: 10px;
+  box-sizing: border-box;
 }
 
-@media (max-width: 768px) {
-  .contact-info-container {
-    box-shadow: none;
-    border: 1px solid #ddd;
-  }
-
-  .contact-info div, .contact-actions a, .contact-actions button {
-    display: block;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .contact-actions a, .contact-actions button {
-    margin-bottom: 0.5rem;
-  }
+.contacts-list-header div.header-cell {
+  font-weight: bold;
+  background-color: #f8f8f8;
 }
 
-/* Adjust the space above the map */
-#map-container {
-  margin-top: 20px; /* Increase space above the map */
-  height: 400px; /* or any other height */
+.contacts-list-item div.cell {
+  border-bottom: 1px solid #ddd;
 }
 
+/* Adjust the alignment for buttons in the Actions column */
+.contacts-list-item div.contact-actions {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
 
-/* Minimal Card Shadow */
-.card.shadow-sm {
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
-  background-color: white;
-  border-radius: 0.25rem;
+.contacts-list-header div.header-cell,
+.contacts-list-item div.cell {
+  display: inline-block;
+  vertical-align: middle;
+  text-align: center;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.contacts-list-header div.header-cell:nth-child(1),
+.contacts-list-item div.cell:nth-child(1) { /* Name */
+  width: 15%;
+}
+
+.contacts-list-header div.header-cell:nth-child(2),
+.contacts-list-item div.cell:nth-child(2) { /* Phone */
+  width: 10%;
+}
+
+.contacts-list-header div.header-cell:nth-child(3),
+.contacts-list-item div.cell:nth-child(3) { /* Email */
+  width: 20%;
+}
+
+.contacts-list-header div.header-cell:nth-child(4),
+.contacts-list-item div.cell:nth-child(4) { /* Address */
+  width: 35%;
+}
+
+.contacts-list-header div.header-cell:nth-child(5),
+.contacts-list-item div.cell:nth-child(5) { /* Contact by */
+  width: 10%;
+}
+
+.contacts-list-header div.header-cell:nth-child(6),
+.contacts-list-item div.cell:nth-child(6) { /* Actions */
+  width: 15%;
+}
+
+.contacts-list-header div.header-cell {
+  font-weight: bold;
+  background-color: #f8f8f8;
+}
+
+.contacts-list-item div.cell {
+  border-bottom: none; /* Remove any bottom border */}
+
+/* Adjust the alignment for buttons in the Actions column */
+.contacts-list-item div.contact-actions {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
 }

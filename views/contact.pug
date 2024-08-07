@@ -1,7 +1,7 @@
 extends layout
 
 block content
-  h1 Contact Information
+  h1.text-center Contact Information
 
   .contact-info-container
     .contact-info
@@ -17,10 +17,10 @@ block content
         if contact.Contact_By_Phone
           | Phone
 
-    .contact-actions
-      a.btn-primary(href=`/contact/${contact.ID}/edit`) Edit
+    .contact-actions(style="justify-content: flex-start;")
+      a.btn.btn-primary(style="width: 60px; " href=`/contact/${contact.ID}/edit`) Edit
       form(method="POST", action=`/contact/${contact.ID}/delete?_csrf=${csrfToken}`)
-        button.btn-danger(type='submit') Delete
+        button.btn.btn-danger(style="margin-top: 5px; " type='submit') Delete
 
   // Add map container
   #map-container

@@ -1,233 +1,163 @@
 extends layout
 
 block content
-    h1#page-title Contact List
+  h1#page-title.text-center.mt-5.mb-4 Contact List
 
-    //- Search form
-    div.search-container
-        input(type='text', id='name-search', placeholder='Search by Name')
-        input(type='text', id='address-search', placeholder='Search by Address')
-        select(id='radius-select')
-            option(value='5') 5 miles
-            option(value='10') 10 miles
-            option(value='25') 25 miles
-        button(type='button', id='search-button') Search
+  //- Search form
+  .search-container
+    input.form-control(type='text', id='name-search', placeholder='Search by Name')
+    input.form-control(type='text', id='address-search', placeholder='Search by Address')
+    select.form-control(id='radius-select')
+      option(value='5') 5 miles
+      option(value='10') 10 miles
+      option(value='25') 25 miles
+    button.btn.btn-primary(type='button', id='search-button') Search
 
-    if contacts && contacts.length
-        ul.contacts-list
-            each contact in contacts
-                li.contacts-list-item(data-marker-id=`${contact.ID}`, data-first-name=`${contact.FirstName}`, data-last-name=`${contact.LastName}`, data-lat=`${contact.lat}`, data-lng=`${contact.lng}`)
-                    div.contact-header #{contact.FirstName} #{contact.LastName}
-                    div #{contact.PhoneNumber}
-                    div #{contact.EmailAddress}
-                    div #{contact.formattedAddress} #{contact.lat} #{contact.lng}
-                    div.contact-actions
-                        a(href=`/contact/${contact.ID}`) View
-                        |  
-                        a(href=`/contact/${contact.ID}/edit`) Edit
-                        br
-                        if contact.Contact_By_Email || contact.Contact_By_Phone
-                            br 
-                            if contact.Contact_By_Email
-                                | Email
-                            if contact.Contact_By_Phone
-                                |    Phone
+  if contacts && contacts.length
+    ul.contacts-list
+      li.contacts-list-header
+        div.header-cell Name
+        div.header-cell Phone
+        div.header-cell Email
+        div.header-cell Address
+        div.header-cell Contact by:
+        div.header-cell Actions
+      each contact in contacts
+        li.contacts-list-item(data-marker-id=`${contact.ID}`, data-first-name=`${contact.FirstName}`, data-last-name=`${contact.LastName}`, data-lat=`${contact.lat}`, data-lng=`${contact.lng}`)
+          div.cell #{contact.FirstName} #{contact.LastName}
+          div.cell #{contact.PhoneNumber}
+          div.cell #{contact.EmailAddress}
+          div.cell #{contact.formattedAddress}
+          div.cell
+            if contact.Contact_By_Email || contact.Contact_By_Phone
+              if contact.Contact_By_Email
+                | Email
+              if contact.Contact_By_Phone
+                |  Phone
+          div.cell.contact-actions
+            a.btn.btn-primary.button-same-size(href=`/contact/${contact.ID}`) View
+            a.btn.btn-secondary.button-same-size(href=`/contact/${contact.ID}/edit`) Edit
 
-    else
-        p No contacts found.
+  else
+    p No contacts found.
 
-    // Map container
-    #map-container(style='height: 700px; margin-top: 20px; margin-bottom: 20px;')
-        #map(style='width: 100%; height: 100%;')
+  // Map container
+  #map-container(style='height: 700px; margin-top: 20px; margin-bottom: 20px;')
+    #map(style='width: 100%; height: 100%;')
 
-    // Leaflet CSS and JS
-    link(rel='stylesheet', href='https://unpkg.com/leaflet@1.9.3/dist/leaflet.css')
-    script(src='https://unpkg.com/leaflet@1.9.3/dist/leaflet.js')
+  // Leaflet CSS and JS
+  link(rel='stylesheet', href='https://unpkg.com/leaflet@1.9.3/dist/leaflet.css')
+  script(src='https://unpkg.com/leaflet@1.9.3/dist/leaflet.js')
 
-    // Geocoding API
-    script(src='https://unpkg.com/node-geocoder@3.27.0/lib/geocoder.js')
+  // Geocoding API
+  script(src='https://unpkg.com/node-geocoder@3.27.0/lib/geocoder.js')
 
-    // Map and Filtering Initialization Script
-    script.
-        console.log('Initializing map and markers...');
+  // Map and Filtering Initialization Script
+  script.
+    var map = L.map('map').setView([41.08224455, -74.1738235180645], 10);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
+      maxZoom: 50
+    }).addTo(map);
 
-        var map = L.map('map').setView([41.08224455, -74.1738235180645], 10); // Adjust the default view coordinates and zoom level
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
-            maxZoom: 50
-        }).addTo(map);
+    var markers = {};
+    var contacts = !{JSON.stringify(contacts)};
 
-        var markers = {};
-        var contacts = !{JSON.stringify(contacts)};
+    contacts.forEach(function(contact) {
+      if (contact.lat && contact.lng) {
+        var marker = L.marker([contact.lat, contact.lng]).addTo(map).bindPopup(contact.FirstName + ' ' + contact.LastName + '<br>' + contact.formattedAddress);
+        markers[contact.ID] = marker;
+      }
+    });
 
-        contacts.forEach(function(contact) {
-            if (contact.lat && contact.lng) {
-                var marker = L.marker([contact.lat, contact.lng]).addTo(map).bindPopup(contact.FirstName + ' ' + contact.LastName + '<br>' + contact.formattedAddress);
-                markers[contact.ID] = marker;
+    function moveToMarker(marker) {
+      if (map.getBounds().contains(marker.getLatLng())) {
+        map.flyTo(marker.getLatLng(), map.getZoom(), { duration: 1 });
+      } else {
+        map.flyTo(marker.getLatLng(), 13, { duration: 1 });
+      }
+      marker.openPopup();
+    }
+
+    document.querySelectorAll('.contacts-list-item').forEach(item => {
+      item.addEventListener('click', function() {
+        var markerId = this.getAttribute('data-marker-id');
+        if (markers[markerId]) {
+          moveToMarker(markers[markerId]);
+        } else {
+          console.warn('No marker found for ID:', markerId);
+        }
+      });
+    });
+
+    // Combined name search
+    var contactListItems = document.querySelectorAll('.contacts-list-item');
+    document.getElementById('name-search').addEventListener('input', function() {
+      var searchText = this.value.toLowerCase();
+      contactListItems.forEach(function(item) {
+        var firstName = item.getAttribute('data-first-name').toLowerCase();
+        var lastName = item.getAttribute('data-last-name').toLowerCase();
+        if (firstName.includes(searchText) || lastName.includes(searchText) || `${firstName} ${lastName}`.includes(searchText)) {
+          item.style.display = '';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    });
+
+    // Geocode and filter contacts by address and radius
+    async function geocodeAddress(address) {
+      var url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&addressdetails=1&limit=1`;
+      var response = await fetch(url);
+      var data = await response.json();
+      if (data.length > 0) {
+        return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+      }
+      return null;
+    }
+
+    function calculateDistance(lat1, lng1, lat2, lng2) {
+      var toRadians = function(degree) { return degree * Math.PI / 180; };
+      var R = 3958.8; // Radius of the Earth in miles
+      var dLat = toRadians(lat2 - lat1);
+      var dLng = toRadians(lng2 - lng1);
+      var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+              Math.sin(dLng / 2) * Math.sin(dLng / 2);
+      var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      var distance = R * c;
+      return distance;
+    }
+
+    document.getElementById('search-button').addEventListener('click', async function() {
+      var address = document.getElementById('address-search').value;
+      var radius = parseFloat(document.getElementById('radius-select').value);
+
+      var geocodeResult = await geocodeAddress(address);
+      if (geocodeResult) {
+        var searchLat = geocodeResult.lat;
+        var searchLng = geocodeResult.lng;
+
+        map.setView([searchLat, searchLng], 11);
+
+        contactListItems.forEach(function(item) {
+          var contactLat = parseFloat(item.getAttribute('data-lat'));
+          var contactLng = parseFloat(item.getAttribute('data-lng'));
+          var distance = calculateDistance(searchLat, searchLng, contactLat, contactLng);
+
+          if (distance <= radius) {
+            item.style.display = '';
+            if (markers[item.getAttribute('data-marker-id')]) {
+              markers[item.getAttribute('data-marker-id')].setOpacity(1);
             }
-        });
-
-        function moveToMarker(marker) {
-            if (map.getBounds().contains(marker.getLatLng())) {
-                map.flyTo(marker.getLatLng(), map.getZoom(), { duration: 1 });
-            } else {
-                map.flyTo(marker.getLatLng(), 13, { duration: 1 });
+          } else {
+            item.style.display = 'none';
+            if (markers[item.getAttribute('data-marker-id')]) {
+              markers[item.getAttribute('data-marker-id')].setOpacity(0);
             }
-            marker.openPopup();
-        }
-
-        document.querySelectorAll('.contacts-list-item').forEach(item => {
-            item.addEventListener('click', function() {
-                var markerId = this.getAttribute('data-marker-id');
-                if (markers[markerId]) {
-                    moveToMarker(markers[markerId]);
-                } else {
-                    console.warn('No marker found for ID:', markerId);
-                }
-            });
+          }
         });
-
-        // Combined name search
-        var contactListItems = document.querySelectorAll('.contacts-list-item');
-        document.getElementById('name-search').addEventListener('input', function() {
-            var searchText = this.value.toLowerCase();
-            contactListItems.forEach(function(item) {
-                var firstName = item.getAttribute('data-first-name').toLowerCase();
-                var lastName = item.getAttribute('data-last-name').toLowerCase();
-                if (firstName.includes(searchText) || lastName.includes(searchText) || `${firstName} ${lastName}`.includes(searchText)) {
-                    item.style.display = '';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        });
-
-        // Geocode and filter contacts by address and radius
-        async function geocodeAddress(address) {
-            var url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&addressdetails=1&limit=1`;
-            var response = await fetch(url);
-            var data = await response.json();
-            if (data.length > 0) {
-                return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
-            }
-            return null;
-        }
-
-        function calculateDistance(lat1, lng1, lat2, lng2) {
-            var toRadians = function(degree) { return degree * Math.PI / 180; };
-            var R = 3958.8; // Radius of the Earth in miles
-            var dLat = toRadians(lat2 - lat1);
-            var dLng = toRadians(lng2 - lng1);
-            var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                    Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
-                    Math.sin(dLng / 2) * Math.sin(dLng / 2);
-            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            var distance = R * c;
-            return distance;
-        }
-
-        document.getElementById('search-button').addEventListener('click', async function() {
-            var address = document.getElementById('address-search').value;
-            var radius = parseFloat(document.getElementById('radius-select').value);
-
-            var geocodeResult = await geocodeAddress(address);
-            if (geocodeResult) {
-                var searchLat = geocodeResult.lat;
-                var searchLng = geocodeResult.lng;
-
-                map.setView([searchLat, searchLng], 11);
-
-                contactListItems.forEach(function(item) {
-                    var contactLat = parseFloat(item.getAttribute('data-lat'));
-                    var contactLng = parseFloat(item.getAttribute('data-lng'));
-                    var distance = calculateDistance(searchLat, searchLng, contactLat, contactLng);
-
-                    if (distance <= radius) {
-                        item.style.display = '';
-                        if (markers[item.getAttribute('data-marker-id')]) {
-                            markers[item.getAttribute('data-marker-id')].setOpacity(1);
-                        }
-                    } else {
-                        item.style.display = 'none';
-                        if (markers[item.getAttribute('data-marker-id')]) {
-                            markers[item.getAttribute('data-marker-id')].setOpacity(0);
-                        }
-                    }
-                });
-            } else {
-                alert('Address not found.');
-            }
-        });
-
-    // Add new styles
-    style.
-        #page-title {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-size: 36px;
-            text-align: center;
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        .search-container {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .search-container input, .search-container select, .search-container button {
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-size: 14px;
-        }
-
-        .search-container button {
-            background-color: #4CAF50;
-            color: white;
-            cursor: pointer;
-            border: none;
-        }
-
-        .search-container button:hover {
-            background-color: #45a049;
-        }
-
-        .contacts-list-item:hover {
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
-
-        .contact-header {
-            font-weight: bold;
-            font-size: 16px;
-            margin-bottom: 5px;
-        }
-
-        .contact-actions a {
-            text-decoration: none;
-            color: white;
-            background-color: #28a745;
-            border-radius: 5px;
-            padding: 5px 10px;
-            margin-right: 5px;
-            font-weight: bold;
-            transition: background-color 0.2s ease;
-        }
-
-        .contact-actions a:hover {
-            text-decoration: underline;
-        }
-
-        .contact-actions a:hover {
-            opacity: 0.8;
-        }
-
-        .contact-actions a.view:hover {
-            background-color: #218838;
-        }
-
-        .contact-actions a.edit:hover {
-            background-color: #0056b3;
-        }
+      } else {
+        alert('Address not found.');
+      }
+    });
