@@ -1,12 +1,11 @@
 extends layout
 
 block content
+  h1.text-center.mb-4(style='text-align: center; margin-top: 0px; margin-bottom: -20px;') GeoContacts
+  h2.text-center.mb-4(style='text-align: center; margin-top: 40px; margin-bottom: -20px;') Sign up
   .login-container
-    .login-form(style='margin-top: 2rem;') 
-      h1.text-center.mb-4 Sign up
-      if error
-        .alert.alert-danger= error
-      form(method='POST', action='/signup')
+    .login-form(style='margin-top: -460px; padding: 10px; display: flex; flex-direction: column; align-items: center; background-color: #f8f9fa; border-radius: 0.25rem; box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);')
+      form(method='POST', action='/signup', style='margin-top: 20px; width: 100%; max-width: 300px; text-align: center;')
         input(type='hidden', name='_csrf', value=csrfToken)
 
         .form-floating.mb-3
@@ -25,6 +24,11 @@ block content
           input.form-control(type='password', name='password', id='password', placeholder=' ', required)
           label(for='password') Password
 
-        .d-grid.gap-2.mt-4
-          button.btn.btn-primary(style="width: 150%; max-width: 400px; margin: 0 auto; margin-top: 5px;",type='submit') Sign up
+        // Error message here
+        if errors && errors.length
+          ul.text-danger(style='margin-bottom: 10px; list-style: none; padding-left: 0;')
+            each error in errors
+              li= error.msg
 
+        .d-grid.gap-2
+          button.btn.btn-primary(style='margin-top: 20px; width: 200px; margin: 0 auto;' type='submit') Sign up

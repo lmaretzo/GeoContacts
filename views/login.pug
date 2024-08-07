@@ -1,12 +1,11 @@
 extends layout
 
 block content
+  h1.text-center.mb-4(style='text-align: center; margin-top: 0px; margin-bottom: -20px;') GeoContacts
+  h2.text-center.mb-4(style='text-align: center; margin-top: 40px; margin-bottom: -20px;') Login
   .login-container
-    .login-form(style='margin-top: 2rem;') 
-      h1.text-center.mb-4 Log In
-      if error
-        .alert.alert-danger= error
-      form(method='POST', action='/login')
+    .login-form(style='margin-top: -540px; padding: 10px; display: flex; flex-direction: column; align-items: center; background-color: #f8f9fa; border-radius: 0.25rem; box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);')
+      form(method='POST', action='/login', style='margin-top: 20px; width: 100%; max-width: 300px; text-align: center;')
         input(type='hidden', name='_csrf', value=csrfToken)
 
         .form-floating.mb-3
@@ -18,8 +17,12 @@ block content
           label(for='password') Password
 
         .form-check.form-switch.mb-3
-          input.form-check-input(type='checkbox', name='rememberMe', id='rememberMe')
+          input.form-check-input(style= 'margin-bottom: 10px;' type='checkbox', name='rememberMe', id='rememberMe')
           label.form-check-label(for='rememberMe') Remember Me
 
+        // Error message here
+        if error
+          p.text-danger(style='margin-bottom: 10px;')= error
+
         .d-grid.gap-2
-          button.btn.btn-primary(style="width: 150%; max-width: 300px; margin: 0 auto; margin-top: 5px;",type='submit') Log In
+          button.btn.btn-primary(style='margin-top: 10px; width: 200px; margin: 0 auto;' type='submit') Log In

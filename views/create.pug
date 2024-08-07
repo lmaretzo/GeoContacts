@@ -4,55 +4,56 @@ block content
   h1.text-center.mb-4 Create Contact
   .container.mt-5
     .row.justify-content-center
-      .col-lg-6.col-md-8.create-form
-        form(method='POST', action='/create')
-          input(type="hidden", name="_csrf", value=csrfToken)
-          
-          .form-floating.mb-3
-            input.form-control(type='text', name='firstName', id='firstName', placeholder='', required)
-            label(for='firstName') First Name*
-          
-          .form-floating.mb-3
-            input.form-control(type='text', name='lastName', id='lastName', placeholder='', required)
-            label(for='lastName') Last Name*
+      .col-lg-6.col-md-8
+        .create-contact-form
+          form(method='POST', action='/create')
+            input(type="hidden", name="_csrf", value=csrfToken)
+            
+            .form-floating.mb-3
+              input.form-control(type='text', name='firstName', id='firstName', placeholder='', required)
+              label(for='firstName') First Name*
+            
+            .form-floating.mb-3
+              input.form-control(type='text', name='lastName', id='lastName', placeholder='', required)
+              label(for='lastName') Last Name*
 
-          .form-floating.mb-3
-            input.form-control(type='tel', name='phoneNumber', id='phoneNumber', placeholder='', required)
-            label(for='phoneNumber') Phone Number*
+            .form-floating.mb-3
+              input.form-control(type='tel', name='phoneNumber', id='phoneNumber', placeholder='', required)
+              label(for='phoneNumber') Phone Number*
 
-          .form-floating.mb-3
-            input.form-control(type='email', name='emailAddress', id='emailAddress', placeholder='', required)
-            label(for='emailAddress') Email Address*
+            .form-floating.mb-3
+              input.form-control(type='email', name='emailAddress', id='emailAddress', placeholder='', required)
+              label(for='emailAddress') Email Address*
 
-          .form-floating.mb-3
-            input.form-control(type='text', name='street', id='street', placeholder='', required)
-            label(for='street') Street*
+            .form-floating.mb-3
+              input.form-control(type='text', name='street', id='street', placeholder='', required)
+              label(for='street') Street*
 
-          .form-floating.mb-3
-            input.form-control(type='text', name='city', id='city', placeholder='', required)
-            label(for='city') City*
+            .form-floating.mb-3
+              input.form-control(type='text', name='city', id='city', placeholder='', required)
+              label(for='city') City*
 
-          .row.g-2.mb-3
-            .col-md-6
-              .form-floating
-                input.form-control(type='text', name='state', id='state', placeholder='')
-                label(for='state') State
-            .col-md-6
-              .form-floating
-                input.form-control(type='text', name='zip', id='zip', placeholder='')
-                label(for='zip') Zip
+            .row.g-2.mb-3
+              .col-md-6
+                .form-floating
+                  input.form-control(type='text', name='state', id='state', placeholder='')
+                  label(for='state') State
+              .col-md-6
+                .form-floating
+                  input.form-control(type='text', name='zip', id='zip', placeholder='')
+                  label(for='zip') Zip
 
-          .form-floating.mb-3
-            input.form-control(type='text', name='country', id='country', placeholder='')
-            label(for='country') Country
+            .form-floating.mb-3
+              input.form-control(type='text', name='country', id='country', placeholder='')
+              label(for='country') Country
 
-          .form-check.form-switch.mb-3
-            input.form-check-input(type='checkbox', name='contactByEmail', id='contactByEmail')
-            label.form-check-label(for='contactByEmail') Contact by Email
+            .form-check.form-switch.mb-3
+              input.form-check-input(type='checkbox', name='contactByEmail', id='contactByEmail')
+              label.form-check-label(for='contactByEmail') Contact by Email
 
-          .form-check.form-switch.mb-3
-            input.form-check-input(type='checkbox', name='contactByPhone', id='contactByPhone')
-            label.form-check-label(for='contactByPhone') Contact by Phone
+            .form-check.form-switch.mb-3
+              input.form-check-input(type='checkbox', name='contactByPhone', id='contactByPhone')
+              label.form-check-label(for='contactByPhone') Contact by Phone
 
           .d-grid.gap-2
             button.btn.btn-primary(type='submit') Create

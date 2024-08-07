@@ -140,7 +140,7 @@ class ContactDB {
                 ID: 2, firstName: 'Jane', lastName: 'Doe', phoneNumber: '987654321',
                 emailAddress: 'jane@example.com', street: '505 Ramapo Valley Rd', city: 'Mahwah',
                 state: 'NJ', zip: '07430', country: 'United States',
-                contactByEmail: 0, contactByPhone: 1, lat: 0, lng: 0,
+                contactByEmail: 0, contactByPhone: 1, lat: 41.0816, lng: -74.1761,
                 formattedAddress: '505 Ramapo Valley Rd, Mahwah, NJ, 07430, United States'
             }
         ];
@@ -151,13 +151,13 @@ class ContactDB {
             const existingContact = await this.runGet(checkSql, [contact.ID]);
             if (existingContact.count === 0) {
                 const insertSql = `
-                    INSERT INTO contacts (
-                        FirstName, LastName, PhoneNumber, EmailAddress,
-                        Street, City, State, Zip, Country, Contact_By_Email,
-                        Contact_By_Phone, lat, lng, formattedAddress
-                    )
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                `;
+                INSERT INTO contacts (
+                    FirstName, LastName, PhoneNumber, EmailAddress,
+                    Street, City, State, Zip, Country, Contact_By_Email,
+                    Contact_By_Phone, lat, lng, formattedAddress
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `;
                 await this.runSql(insertSql, [
                     contact.firstName, contact.lastName, contact.phoneNumber, contact.emailAddress,
                     contact.street, contact.city, contact.state, contact.zip, contact.country,

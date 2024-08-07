@@ -462,3 +462,53 @@ button[type='submit']:hover {
   justify-content: center;
   gap: 5px;
 }
+.no-contacts-message {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  color: #333; /* Adjust the color as needed */
+  margin-top: 20px;
+  margin-bottom: 7px;
+}
+
+.contacts-info-message {
+  text-align: center;
+  font-size: 16px;
+  color: #666; /* Lighter color for the smaller text */
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.create-contact-link {
+  display: inline-block;
+  font-size: 18px;
+  color: #007bff; /* Blue color for the link */
+  text-decoration: none;
+  margin-top: 10px;
+}
+
+.create-contact-link:hover {
+  text-decoration: underline;
+}
+/* only for the create form */
+.create-contact-form {
+  padding: 20px;
+  border-radius: 0.25rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+  background-color: #f8f9fa;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.create-contact-form .form-floating > .form-control {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.create-contact-form .row.g-2.mb-3 .form-floating {
+  width: 100%;
+  box-sizing: border-box;
+}
+.create-contact-form .d-grid.gap-2 {
+  margin-top: 20px; /* Adjust this value as needed */
+}

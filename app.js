@@ -100,7 +100,7 @@ app.get('/contact/:id', async (req, res) => {
 
 
 // Route to display the edit page for a contact
-app.get('/contact/:id/edit', async (req, res) => {
+app.get('/contact/:id/edit', requireLogin, async (req, res) => {
     try {
         const contact = await db.getContactById(req.params.id);
         if (!contact) {
@@ -171,7 +171,7 @@ app.get('/login', (req, res) => {
 });
 
 
-app.get('/create', (req, res) => {
+app.get('/create', requireLogin, (req, res) => {
     res.render('create', {
         csrfToken: req.csrfToken(),
         user: req.session.userId
@@ -211,7 +211,6 @@ app.post('/create', [
 
     console.log('Inserting new contact:', req.body); 
 
-    console.log('req.body:', req.body); // for debugging
     try {
         const address = `${req.body.street}, ${req.body.city}, ${req.body.state}, ${req.body.zip}, ${req.body.country}`;
 
@@ -234,7 +233,7 @@ app.post('/create', [
 });
 
 
-app.delete('/:id/delete', async (req, res) => {
+app.delete('/:id/delete', requireLogin, async (req, res) => {
     try {
         await db.deleteContact(req.params.id);
         res.redirect('/');
@@ -346,7 +345,7 @@ app.post('/signup', [
 
 
 
-app.post('/contact/:id/delete', async (req, res) => {
+app.post('/contact/:id/delete', requireLogin, async (req, res) => {
     try {
         await db.deleteContact(req.params.id);
         res.redirect('/');
@@ -362,4 +361,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`);
 });
-

@@ -1,7 +1,7 @@
 extends layout
 
 block content
-  h1#page-title.text-center.mt-5.mb-4 Contact List
+  h1#page-title.text-center.mt-5.mb-4 GeoContacts
 
   //- Search form
   .search-container
@@ -39,7 +39,10 @@ block content
             a.btn.btn-secondary.button-same-size(href=`/contact/${contact.ID}/edit`) Edit
 
   else
-    p No contacts found.
+    p.no-contacts-message No Contacts
+    p.contacts-info-message Contacts you've created will appear here.
+    p.contacts-info-message 
+      a(href="/create", class="create-contact-link") Create New Contact
 
   // Map container
   #map-container(style='height: 700px; margin-top: 20px; margin-bottom: 20px;')
