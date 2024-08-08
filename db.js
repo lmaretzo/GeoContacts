@@ -130,19 +130,20 @@ class ContactDB {
     async addTestContacts() {
         const contacts = [
             {
-                ID: 1, firstName: 'John', lastName: 'Doe', phoneNumber: '123456789',
-                emailAddress: 'john@example.com', street: '1 Tornado Dr', city: 'Tuxedo',
+                ID: 1, firstName: 'John', lastName: 'Smith', phoneNumber: '(123) 456-7890',
+                emailAddress: 'smith@example.com', street: '1 Tornado Dr', city: 'Tuxedo',
                 state: 'NY', zip: '10987', country: 'United States',
                 contactByEmail: 1, contactByPhone: 0, lat: 41.1885435, lng: -74.1852656,
                 formattedAddress: '1 Tornado Dr, Tuxedo, NY, 10987, United States'
             },
             {
-                ID: 2, firstName: 'Jane', lastName: 'Doe', phoneNumber: '987654321',
-                emailAddress: 'jane@example.com', street: '505 Ramapo Valley Rd', city: 'Mahwah',
+                ID: 2, firstName: 'Maria', lastName: 'Garcia', phoneNumber: '(987) 654-3212',
+                emailAddress: 'Garcia@example.com', street: '505 Ramapo Valley Rd', city: 'Mahwah',
                 state: 'NJ', zip: '07430', country: 'United States',
                 contactByEmail: 0, contactByPhone: 1, lat: 41.0816, lng: -74.1761,
                 formattedAddress: '505 Ramapo Valley Rd, Mahwah, NJ, 07430, United States'
             }
+            
         ];
     
         const checkSql = `SELECT COUNT(*) AS count FROM contacts WHERE ID = ?`;

@@ -25,7 +25,7 @@ block content
       each contact in contacts
         li.contacts-list-item(data-marker-id=`${contact.ID}`, data-first-name=`${contact.FirstName}`, data-last-name=`${contact.LastName}`, data-lat=`${contact.lat}`, data-lng=`${contact.lng}`)
           div.cell #{contact.FirstName} #{contact.LastName}
-          div.cell #{contact.PhoneNumber}
+          div.cell(style='width: 15%; min-width: 120px;') #{contact.PhoneNumber}
           div.cell #{contact.EmailAddress}
           div.cell #{contact.formattedAddress}
           div.cell

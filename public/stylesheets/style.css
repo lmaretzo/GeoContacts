@@ -5,7 +5,7 @@ html, body {
   height: 100%;
   background: #ffffff;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 14px;
+  font-size: 1rem;
   color: #333333;
 }
 
@@ -93,6 +93,7 @@ button, .btn {
   border: 1px solid #ced4da;
   border-radius: .25rem;
   transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+  margin: 0; /* Ensure consistency across inputs */
 }
 
 .form-control:focus {
@@ -266,8 +267,8 @@ h2 {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: 80vh; /* Adjusted to move the box up */
-  margin-top: -120px; /* Adjusted to move the box up */
+  min-height: 100vh; /* Adjusted to move the box up */
+  margin-top: 0; /* Adjusted to move the box up */
 }
 
 .login-form, .signup-form {
@@ -275,8 +276,8 @@ h2 {
   padding: 2rem;
   border-radius: 0.25rem;
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
-  max-width: 500px;
-  width: 70%;
+  max-width: 400px;
+  width: 90%;
 }
 
 button[type='submit'] {
